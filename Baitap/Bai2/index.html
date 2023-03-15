@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Nhập thông tin khoản vay:</h1>
+
+    <form id="tinh">
+        <table>
+            <tr>
+                <td>1) Số tiền:</td>
+                <td><input type="text" class="money"></td>
+            </tr>
+            <tr>
+                <td>2) Lãi xuất hàng năm(%): </td>
+                <td><input type="text" class="lx"></td>
+            </tr>
+            <tr>
+                <td>3) Thời gian trả(năm):</td>
+                <td><input type="text" class="time"></td>
+            </tr>
+        </table>
+        <button type="submit" class="btn btn-primary">Tính</button>
+        <table>
+            <h1>Thông tin thanh toán:</h1>
+            <tr>
+                <td>4) Số tiền phải trả hàng tháng:</td>
+                <td><input type="text" class="moneymonth"></td>
+            </tr>
+            <tr>
+                <td>5) Tổng số tiền phải trả: </td>
+                <td><input type="text" class="moneygive"></td>
+            </tr>
+            <tr>
+                <td>6) Tổng số lãi phải trả:</td>
+                <td><input type="text" class="interest"></td>
+            </tr>
+        </table>
+    </form>
+    <script>
+        const tinh = document.getElementById('tinh');
+        const tienvao = document.querySelector('.money');
+        const laixuat = document.querySelector('.lx');
+        const timeInput = document.querySelector('.time');
+        const buttonSubmit = document.querySelector('.btn');
+        const moneyMonthDaily = document.querySelector('.moneymonth');
+        const amountMoney = document.querySelector('.moneygive');
+        const tonglai = document.querySelector('.interest');
+    
+        const handleResetClick = () => {
+            tienvao.value = '';
+            laixuat.value = '';
+            timeInput.value = '';
+            moneyMonthDaily.value= '';
+            amountMoney.value = '';
+            tonglai.value = '';
+        }
+    
+        const handleButtonClick = () =>{
+    const interestValue = Number.parseFloat(laixuat.value)/100/12; // chuyển đổi lãi suất hàng năm thành lãi suất hàng tháng
+    const amountMoneyValue = Number.parseFloat(tienvao.value);
+    const timeValue = Number.parseInt(timeInput.value) * 12; // chuyển đổi thời gian trả theo năm thành số tháng
+    const x = Math.pow(1 + interestValue, timeValue);
+    const moneyMonthly = (amountMoneyValue * x * interestValue)/(x-1); // tính số tiền phải trả hàng tháng
+    moneyMonthDaily.value = moneyMonthly.toFixed(2);
+    const totalMoney = moneyMonthly * timeValue; // tính tổng số tiền phải trả
+    amountMoney.value = totalMoney.toFixed(2);
+    const totalInterest = totalMoney - amountMoneyValue; // tính tổng số lãi phải trả
+    tonglai.value = totalInterest.toFixed(2);
+}
+    
+        tinh.addEventListener('submit', e =>{
+            e.preventDefault();
+            handleButtonClick()
+        })
+    </script>
+    
+    
+</body>
+</html>

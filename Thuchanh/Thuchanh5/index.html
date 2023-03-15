@@ -1,0 +1,26 @@
+<DOCTYPE html>
+    <html>
+    <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="script.js"></script>
+    </head>
+    <body>
+      <h1 style="text-align:center; color:red;" id="hidden">I was hidden!</h1>
+      <button>Alert me!</button>
+      <script>
+        $(document).ready(function() {
+	$("#button").hover(function() {
+		$(this).css("color", "black");
+	}, 
+	function() {
+		$(this).hide();
+	}
+  );
+
+	$("button").click(function() {
+		alert("I'm alerting you");
+	})
+});
+      </script>
+    </body>
+    </html>
