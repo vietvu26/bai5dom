@@ -1,111 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <div>
-        <h1>Todo List</h1>
-        <form action="#">
-          <input type="text" id="todoInput" placeholder="Todo...">
-          <button>Add</button>
-        </form>
-        <ul class="todoList">
-        </ul>
-      </div>
-      <div class="mask">
-        <form action="#" id="formEdit">
-          <h4>Edit todo</h4>
-          <span class="material-symbols-outlined close-icon">
-            close
-            </span>
-          <div class="form-content">
-            <label for="todoNameInput">Todo's name: </label>
-            <input type="text" name="todoNameInput" id="todoNameInput" placeholder="Anything...">
-          </div>
-          <button class="btn-edit">Edit</button>
-        </form>
-      </div>
-    <script>
-        let todos = ["Learn HTML", "Learn CSS", "Learn JS"];
-let todoList = document.querySelector('.todoList');
-const valueInput = document.getElementById('todoInput');
-const button = document.querySelector('button');
-const form = document.querySelector('form');
-const maskBlur = document.querySelector('.mask');
-const closeIconEditForm = document.querySelector('.close-icon');
+  </head>
+  <body>
+    <h1>Todo list</h1>
+    <form>
+      <input type="text" placeholder="Add todo" />
+      <button type="submit">Add</button>
+    </form>
+    <ul></ul>
+  </body>
+  <script>
+    const todos = [];
 
-function handleDeleteClick(index) {
-  todos.splice(index, 1);
-  render();
-}
+    const todoList = document.querySelector("ul");
 
-function handleEditClick(index) {
-  const input = document.getElementById('todoNameInput').value;
-  todos = todos.toString().replace(todos[index], input).split(',').map(e => e);
-}
+    const form = document.querySelector("form");
 
-function handleOpenEditFormClick(id) {
-  maskBlur.style.display = 'flex';
-  const editInput = document.querySelector('#todoNameInput');
-  editInput.value = todos[id];
-}
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const input = document.querySelector("input");
 
-function handleCloseEditFormClick() {
-  maskBlur.style.display = 'none';
-  render();
-}
+      const value = input.value;
+      todos.push(value);
 
-let idEdit = 0;
-function render() {
-  const todoElements = todos.map(todo => `<li>${todo} <button id="delBtn">Delete</button> <button id="editBtn">Edit</button></li>`);
-  todoList.innerHTML = todoElements.join("");
-  const btnsDel = document.querySelectorAll("#delBtn");
-  btnsDel.forEach((button, index) => {
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleDeleteClick(index);
-    })
-  });
-  const btnsEdit = document.querySelectorAll('#editBtn');
-  btnsEdit.forEach((button, index) => {
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      idEdit = index;
-      handleOpenEditFormClick(index);
-    })
-  });
-}
+      input.value = "";
 
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  if (valueInput.value.length > 0) {
-    todos.push(valueInput.value);
-    valueInput.value = '';
-  }
-  render();
-});
+      render();
+    });
 
-const formEdit = document.getElementById('formEdit');
-formEdit.addEventListener('submit', e => {
-  e.preventDefault();
-  handleEditClick(idEdit);
-  handleCloseEditFormClick();
-})
+    function handleDelete(index) {
+      todos.splice(index, 1);
 
-closeIconEditForm.addEventListener('click', (e) => {
-  e.stopPropagation();
-  handleCloseEditFormClick();
-});
+      render();
+    }
 
-function initialApp() {
-  render();
-}
+    function handleEdit(index) {
+      const todo = todos[index];
+      const input = document.querySelector("input");
+      input.value = todo;
+      todos.splice(index, 1);
+      input.focus();
 
-initialApp();
-    </script>
-</body>
+      const addButton = document.querySelector("button[type='submit']");
+      addButton.textContent = "Submit";
+      form.removeEventListener("submit", handleSubmit);
+      form.addEventListener("submit", handleEditSubmit);
+    }
+
+    function handleEditSubmit(event) {
+      event.preventDefault();
+      const input = document.querySelector("input");
+      const value = input.value;
+      const index = todos.length;
+      todos.push(value);
+      input.value = "";
+
+      const addButton = document.querySelector("button[type='submit']");
+      addButton.textContent = "Add";
+      form.removeEventListener("submit", handleEditSubmit);
+      form.addEventListener("submit", handleSubmit);
+
+      render();
+    }
+
+    // function render() {
+    //   const todoElements = todos.map(function (todo) {
+    //     return `
+    //       <li>
+    //         <span>${todo}</span>
+    //         <button id="edit">Edit</button>
+    //         <button id="delete">Delete</button>
+    //       </li>
+    //     `;
+    //   });
+
+    function render() {
+      const todoElements = todos.map(function (todo, index) {
+        return `
+          <li>
+            <span>${todo}</span>
+            <button class="edit" data-index="${index}">Edit</button>
+            <button class="delete" data-index="${index}">Delete</button>
+          </li>
+        `;
+      });
+
+      todoList.innerHTML = todoElements.join("");
+
+      const deleteButtons = document.querySelectorAll(".delete");
+      deleteButtons.forEach(function (deleteButton) {
+        deleteButton.addEventListener("click", function () {
+          const index = parseInt(deleteButton.dataset.index);
+          handleDelete(index);
+        });
+      });
+
+      const editButtons = document.querySelectorAll(".edit");
+      editButtons.forEach(function (editButton) {
+        editButton.addEventListener("click", function () {
+          const index = parseInt(editButton.dataset.index);
+          handleEdit(index);
+        });
+      });
+    }
+
+    todoList.innerHTML = todoElements.join("");
+
+    const deleteButtons = document.querySelectorAll("#delete");
+
+    for (let index = 0; index < deleteButtons.length; index++) {
+      const deleteButton = deleteButtons[index];
+      deleteButton.addEventListener("click", function () {
+        handleDelete(index);
+      });
+    }
+
+    function initialApp() {
+      render();
+    }
+
+    initialApp();
+  </script>
 </html>
